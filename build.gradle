@@ -5,12 +5,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.0.+', changing: true
     }
 }
 
 plugins {
-    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'net.minecraftforge.gradle' version '6.0.+'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -18,12 +18,12 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 group = 'sonnenlichts.fsc'
-version = '1.0.2-1.20.1'
+version = '1.0.2-1.21.3'
 archivesBaseName = 'trajectory_estimation'
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 minecraft {
-    mappings channel: 'official', version: '1.20.1'
+    mappings channel: 'official', version: '1.21.3'
     runs {
         client {
             workingDirectory project.file('run')
@@ -108,7 +108,7 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:1.20.1-47.2.20"
+    minecraft "net.minecraftforge:forge:1.21.3-53.0.11"
     compileOnly fg.deobf('curse.maven:mrcrayfishguns-945471:5060608')
     compileOnly fg.deobf('curse.maven:framework-549225:4718251')
     compileOnly fg.deobf('curse.maven:l_ender-s-cataclysm-551586:5058433')
