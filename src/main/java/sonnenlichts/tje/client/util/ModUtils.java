@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -379,7 +380,7 @@ public class ModUtils {
         ItemStack mainStack = player.getItemInHand(InteractionHand.MAIN_HAND);
         ItemStack offStack = player.getItemInHand(InteractionHand.OFF_HAND);
         if (mainStack.getItem() instanceof ThrowablePotionItem
-                || mainStack.getItem().getUseAnimation(mainStack) != UseAnim.NONE
+                || mainStack.getItem().getUseAnimation(mainStack) != ItemUseAnimation.NONE
                 || mainStack.getItem() instanceof EggItem
                 || mainStack.getItem() instanceof SnowballItem
                 || mainStack.getItem() instanceof ExperienceBottleItem
@@ -397,7 +398,7 @@ public class ModUtils {
             return mainStack;
         } else {
             if (offStack.getItem() instanceof ThrowablePotionItem
-                    || offStack.getItem().getUseAnimation(offStack) != UseAnim.NONE
+                    || offStack.getItem().getUseAnimation(offStack) != ItemUseAnimation.NONE
                     || offStack.getItem() instanceof EggItem
                     || offStack.getItem() instanceof SnowballItem
                     || offStack.getItem() instanceof ExperienceBottleItem
@@ -451,15 +452,13 @@ public class ModUtils {
             float amplitude = Mth.clamp((factor - player.tickCount - Minecraft.getInstance().getPartialTick()) / factor, 0F, 1F);
             RenderSystem.depthMask(false);
             RenderSystem.disableCull();
-            RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
+            RenderSystem.setShader(CoreShaders.RENDERTYPE_LINES);
             Tesselator tesselator = RenderSystem.renderThreadTesselator();
-            BufferBuilder bufferbuilder = tesselator.getBuilder();
+            BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
             RenderSystem.lineWidth(lw);
-            bufferbuilder.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
             float rd = 2F;
             for (int p = 0; p < rd; ++p)
                 drawLineVertex(changeX, changeY, changeZ, bufferbuilder, entry, p / rd, (p + 1) / rd, amplitude, lr, lg, lb, la);
-            tesselator.end();
             RenderSystem.lineWidth(1.0F);
             RenderSystem.enableCull();
             RenderSystem.depthMask(true);
@@ -477,7 +476,7 @@ public class ModUtils {
         nx /= s;
         ny /= s;
         nz /= s;
-        buffer.vertex(normal.pose(), px, py, pz).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(normal.normal(), nx, ny, nz).endVertex();
+        buffer.addVertex(normal.pose(), px, py, pz).setColor(r, g, b, a).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(15728880, 0).setNormal(normal, nx, ny, nz);
     }
 
     public static void drawCubeFullLight(VertexConsumer builder, PoseStack matrix, double x, double y, double z, float hw, float h, float minU, float maxU, float minV, float maxV, int r, int g, int b, int a) {
@@ -504,7 +503,7 @@ public class ModUtils {
     }
 
     public static void buildVertex(VertexConsumer builder, PoseStack matrixStackIn, float x, float y, float z, float u, float v, int r, int g, int b, int a, int packedLight) {
-        builder.vertex(matrixStackIn.last().pose(), x, y, z).color(r, g, b, a).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(matrixStackIn.last().normal(), 0.0F, 1.0F, 0.0F).endVertex();
+        builder.addVertex(matrixStackIn.last().pose(), x, y, z).setColor(r, g, b, a).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(packedLight, 0).setNormal(matrixStackIn.last(), 0.0F, 1.0F, 0.0F);
     }
 
     public static Vec3 calculateShootVec(Player player, double pVelocity, double pInaccuracy) {

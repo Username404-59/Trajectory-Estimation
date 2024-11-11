@@ -30,7 +30,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.event.RenderArmEvent;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
@@ -47,7 +47,6 @@ import sonnenlichts.tje.client.util.StringHelper;
 
 import java.util.List;
 
-import static net.minecraft.world.item.CrossbowItem.containsChargedProjectile;
 import static sonnenlichts.tje.TrajectoryEstimation.MOD_ID;
 
 @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
@@ -57,8 +56,7 @@ public class ClientRenderHandler {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     @SubscribeEvent
-    public void rendersWorldEvent(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
+    public void rendersWorldEvent(RenderArmEvent event) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         Level pLevel = mc.level;
@@ -77,7 +75,7 @@ public class ClientRenderHandler {
 
         if (ModUtils.isClassOrSuperClass(itemStackUsing.getItem(), BowItem.class)) {
             int remainTick = player.getUseItemRemainingTicks();
-            int i = itemStackUsing.getItem().getUseDuration(itemStackUsing) - remainTick;
+            int i = itemStackUsing.getItem().getUseDuration(itemStackUsing, player) - remainTick;
             float power = ModUtils.getPowerForTime(i);
             float pVelocity = power * 3.0F;
             float pInaccuracy = 0.0F;
@@ -90,7 +88,7 @@ public class ClientRenderHandler {
         if (ModUtils.isClassOrSuperClass(itemStack.getItem(), CrossbowItem.class)) {
             if (!CrossbowItem.isCharged(itemStack)) return;
             float pProjectileAngle = 0;
-            float pVelocity = containsChargedProjectile(itemStack, Items.FIREWORK_ROCKET) ? 1.6F : 3.15F;
+            float pVelocity = CrossbowItem.ARROW_ONLY.test(itemStack) ? 3.15F : 1.6F;
             float pInaccuracy = 0.0F;
             float gravity = 0.05F;
             Vec3 vec31 = player.getUpVector(1.0F);

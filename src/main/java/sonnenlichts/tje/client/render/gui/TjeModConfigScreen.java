@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 
 @OnlyIn(Dist.CLIENT)
 public class TjeModConfigScreen extends Screen {
-    public static final CubeMap CUBE_MAP = new CubeMap(new ResourceLocation("textures/gui/title/background/panorama"));
+    public static final CubeMap CUBE_MAP = new CubeMap(ResourceLocation.tryParse("textures/gui/title/background/panorama"));
     private PanoramaRenderer panorama = new PanoramaRenderer(CUBE_MAP);
     private final Screen previousScreen;
     private ScrollArea contextArea;

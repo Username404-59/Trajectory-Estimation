@@ -11,6 +11,6 @@ public class StringHelper {
     }
 
     public static ResourceLocation create(String target) {
-        return new ResourceLocation(MOD_ID, target);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, target);
     }
 }
